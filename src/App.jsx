@@ -615,9 +615,9 @@ const App = () => {
                                     href="#contacts"
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
-                                    className="w-full bg-[#F25A18] text-white font-[800] text-[20px] md:text-[28px] py-6 rounded-[15px] flex items-center justify-center gap-4 shadow-xl uppercase font-manrope transition-shadow hover:shadow-orange-500/20"
+                                    className="w-full bg-[#F25A18] text-white font-[800] text-[18px] sm:text-[20px] md:text-[28px] py-4 sm:py-6 rounded-[12px] md:rounded-[15px] flex items-center justify-center gap-3 sm:gap-4 shadow-xl uppercase font-manrope transition-shadow hover:shadow-orange-500/20"
                                 >
-                                    УЗНАТЬ СТОИМОСТЬ <ChevronRight size={36} strokeWidth={3} />
+                                    УЗНАТЬ СТОИМОСТЬ <ChevronRight size={windowWidth < 640 ? 24 : 36} strokeWidth={3} />
                                 </motion.a>
                             </motion.div>
                         </div>
