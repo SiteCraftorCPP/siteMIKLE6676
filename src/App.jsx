@@ -155,7 +155,7 @@ const App = () => {
             <motion.header
                 initial={false}
                 animate={{
-                    height: windowWidth < 1024 ? 100 : (isScrolled ? 100 : 140),
+                    height: windowWidth < 640 ? 80 : (windowWidth < 1024 ? 100 : (isScrolled ? 100 : 140)),
                     backgroundColor: isScrolled ? 'rgba(255, 255, 255, 0.95)' : 'transparent',
                     boxShadow: isScrolled ? '0 4px 20px rgba(0,0,0,0.1)' : 'none'
                 }}
@@ -189,8 +189,8 @@ const App = () => {
                 <div className="w-full h-full flex items-center relative z-10 px-0 md:px-4">
                     {/* Mobile Header (visible below 1024px) */}
                     <div className="flex lg:hidden items-center justify-start w-full transition-all duration-300 py-2 px-0">
-                        <div className="flex items-center gap-0 transform translate-y-2">
-                            <div className="relative flex items-center justify-start" style={{ width: '100px', height: '100px' }}>
+                        <div className="flex items-center gap-0 transform translate-y-1">
+                            <div className="relative flex items-center justify-start" style={{ width: windowWidth < 640 ? '80px' : '100px', height: windowWidth < 640 ? '80px' : '100px' }}>
                                 {/* Logo 1 (White - always present) */}
                                 <img
                                     src="/image/block1i2iShapka/logo1.png"
@@ -204,15 +204,15 @@ const App = () => {
                                     className={`absolute left-0 w-auto h-full object-contain transition-opacity duration-300 ${isScrolled ? 'opacity-100' : 'opacity-0'}`}
                                 />
                             </div>
-                            <div className={`flex flex-col justify-center items-stretch w-fit -ml-2 transition-all duration-300 ${isScrolled ? 'text-[#21243F]' : 'text-white'}`}>
-                                <div className={`font-[800] leading-none uppercase transition-all duration-300 text-[15px]`}>
+                            <div className={`flex flex-col justify-center items-stretch w-fit -ml-1 transition-all duration-300 ${isScrolled ? 'text-[#21243F]' : 'text-white'}`}>
+                                <div className={`font-[800] leading-none uppercase transition-all duration-300 ${windowWidth < 640 ? 'text-[12px]' : 'text-[15px]'}`}>
                                     <div className="flex justify-between w-full">
                                         {"СЕРВИСНАЯ СЛУЖБА ИСТРА".split("").map((char, i) => (
                                             <span key={i}>{char === " " ? "\u00A0" : char}</span>
                                         ))}
                                     </div>
                                 </div>
-                                <div className="font-[800] leading-none uppercase tracking-tight opacity-100 mt-1 whitespace-nowrap text-[15px]">
+                                <div className={`font-[800] leading-none uppercase tracking-tight opacity-100 mt-1 whitespace-nowrap ${windowWidth < 640 ? 'text-[12px]' : 'text-[15px]'}`}>
                                     ОБСЛУЖИВАНИЕ / РЕМОНТ / МОНТАЖ
                                 </div>
                             </div>
@@ -315,7 +315,7 @@ const App = () => {
 
                     {/* Mobile Menu Toggle */}
                     <button
-                        className="lg:hidden p-2 md:p-3 absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 mt-2"
+                        className="lg:hidden p-2 md:p-3 absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 mt-0"
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                     >
                         {isMobileMenuOpen ? (
@@ -366,7 +366,7 @@ const App = () => {
                                             <a
                                                 key={item}
                                                 href={`#${sectionIds[item]}`}
-                                                className="font-[800] text-[22px] md:text-[26px] text-[#21243F] hover:text-[#F25A18] transition-colors border-b border-gray-100 pb-2"
+                                                className="font-[800] text-[18px] sm:text-[22px] md:text-[26px] text-[#21243F] hover:text-[#F25A18] transition-colors border-b border-gray-100 pb-2"
                                                 onClick={() => setIsMobileMenuOpen(false)}
                                             >
                                                 {item}
@@ -413,7 +413,7 @@ const App = () => {
                 </motion.div>
 
                 {/* Hero Content */}
-                <div className="relative z-20 w-full px-6 md:px-8 lg:px-20 pt-[180px] md:pt-[220px] lg:translate-x-[35px]">
+                <div className="relative z-20 w-full px-4 sm:px-8 lg:px-20 pt-[220px] sm:pt-[280px] md:pt-[340px] lg:translate-x-[35px]">
                     <motion.div
                         initial="hidden"
                         animate="visible"
@@ -428,10 +428,10 @@ const App = () => {
                                 visible: { opacity: 1, y: 0 }
                             }}
                             transition={{ duration: 0.8 }}
-                            className="text-[48px] sm:text-[60px] md:text-[90px] lg:text-[120px] font-[800] text-white leading-[1.05] md:leading-[0.95] mb-10 md:mb-14 uppercase tracking-tighter"
+                            className="text-[32px] sm:text-[48px] md:text-[90px] lg:text-[120px] font-[800] text-white leading-[1.1] md:leading-[0.95] mb-6 sm:mb-10 md:mb-14 uppercase tracking-tighter"
                         >
                             ИНЖЕНЕРНЫЕ СИСТЕМЫ<br />
-                            <span className="text-[#F26E35] inline-block mt-3 md:mt-4">В ИСТРИНСКОМ РАЙОНЕ</span>
+                            <span className="text-[#F26E35] inline-block mt-2 md:mt-4">В ИСТРИНСКОМ РАЙОНЕ</span>
                         </motion.h1>
 
                         <motion.p
@@ -440,7 +440,7 @@ const App = () => {
                                 visible: { opacity: 1, y: 0 }
                             }}
                             transition={{ duration: 0.8 }}
-                            className="text-[22px] sm:text-[24px] md:text-[36px] lg:text-[46px] font-[600] text-white/95 max-w-[1300px] leading-[1.2] md:leading-[1.25] mb-14 md:mb-24"
+                            className="text-[16px] sm:text-[22px] md:text-[36px] lg:text-[46px] font-[600] text-white/95 max-w-[1300px] leading-[1.3] md:leading-[1.25] mb-10 sm:mb-14 md:mb-24"
                         >
                             Профессиональный ремонт, монтаж и<br className="hidden md:block" /> обслуживание отопления и водоснабжения.<br className="hidden md:block" /> Гарантия на работы и аварийные выезды
                         </motion.p>
@@ -456,10 +456,10 @@ const App = () => {
                                 href="#contacts"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="group relative bg-[#F25A18] text-white font-[800] text-[24px] sm:text-[30px] md:text-[40px] lg:text-[50px] px-12 md:px-24 py-7 md:py-12 rounded-[10px] md:rounded-[15px] flex items-center gap-5 md:gap-10 shadow-2xl w-fit"
+                                className="group relative bg-[#F25A18] text-white font-[800] text-[18px] sm:text-[24px] md:text-[40px] lg:text-[50px] px-8 sm:px-12 md:px-24 py-5 sm:py-7 md:py-12 rounded-[10px] md:rounded-[15px] flex items-center gap-4 md:gap-10 shadow-2xl w-fit"
                             >
                                 ВЫЗВАТЬ МАСТЕРА
-                                <ChevronRight size={windowWidth < 768 ? 32 : 64} strokeWidth={3} className="transition-transform group-hover:translate-x-2" />
+                                <ChevronRight size={windowWidth < 640 ? 24 : (windowWidth < 768 ? 32 : 64)} strokeWidth={3} className="transition-transform group-hover:translate-x-2" />
 
                                 {/* Glow Animation */}
                                 <motion.div
@@ -497,13 +497,13 @@ const App = () => {
                     }}
                 />
 
-                <div className="relative z-10 max-w-full mx-auto px-6 md:px-16 lg:px-32">
+                <div className="relative z-10 max-w-full mx-auto px-4 sm:px-16 lg:px-32">
                     <motion.h2
                         initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
-                        className="text-[32px] sm:text-[48px] md:text-[64px] font-[800] leading-[1.1] text-[#21243F] mb-10 md:mb-[70px] uppercase font-manrope"
+                        className="text-[28px] sm:text-[48px] md:text-[64px] font-[800] leading-[1.1] text-[#21243F] mb-8 sm:mb-[70px] uppercase font-manrope"
                     >
                         Профессиональная забота о вашем доме:<br className="hidden md:block" />
                         <span className="text-[#F25A18]"> монтаж, ремонт и обслуживание систем</span>
@@ -525,7 +525,7 @@ const App = () => {
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
                                 </div>
                                 <div className="absolute inset-0 p-6 md:p-10 lg:p-12 flex flex-col justify-end">
-                                    <h3 className="text-[20px] sm:text-[24px] md:text-[36px] lg:text-[48px] font-[600] text-white leading-tight uppercase font-inter transition-all duration-500 group-hover:-translate-y-[180px] md:group-hover:-translate-y-[250px]">РЕМОНТ</h3>
+                                    <h3 className="text-[18px] sm:text-[24px] md:text-[36px] lg:text-[48px] font-[600] text-white leading-tight uppercase font-inter transition-all duration-500 group-hover:-translate-y-[180px] md:group-hover:-translate-y-[250px]">РЕМОНТ</h3>
                                     <ul className="mt-4 space-y-2 opacity-0 translate-y-8 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-[-15px] md:group-hover:translate-y-[-30px] font-inter absolute bottom-6 md:bottom-12 left-6 md:left-12 right-6 md:right-12">
                                         {services[0].items.map((item, i) => (
                                             <li key={i} className="text-[14px] md:text-[20px] lg:text-[24px] font-[500] text-white leading-tight flex items-start gap-3">
@@ -552,7 +552,7 @@ const App = () => {
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
                                 </div>
                                 <div className="absolute inset-0 p-6 md:p-10 lg:p-12 flex flex-col justify-end">
-                                    <h3 className="text-[20px] sm:text-[24px] md:text-[36px] lg:text-[48px] font-[600] text-white leading-tight uppercase font-inter transition-all duration-500 group-hover:-translate-y-[180px] md:group-hover:-translate-y-[250px]">ОБСЛУЖИВАНИЕ</h3>
+                                    <h3 className="text-[18px] sm:text-[24px] md:text-[36px] lg:text-[48px] font-[600] text-white leading-tight uppercase font-inter transition-all duration-500 group-hover:-translate-y-[180px] md:group-hover:-translate-y-[250px]">ОБСЛУЖИВАНИЕ</h3>
                                     <ul className="mt-4 space-y-2 opacity-0 translate-y-8 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-[-15px] md:group-hover:translate-y-[-30px] font-inter absolute bottom-6 md:bottom-12 left-6 md:left-12 right-6 md:right-12">
                                         {services[1].items.map((item, i) => (
                                             <li key={i} className="text-[14px] md:text-[20px] lg:text-[24px] font-[500] text-white leading-tight flex items-start gap-3">
@@ -579,7 +579,7 @@ const App = () => {
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
                                 </div>
                                 <div className="absolute inset-0 p-6 md:p-10 lg:p-12 flex flex-col justify-end">
-                                    <h3 className="text-[20px] sm:text-[24px] md:text-[34px] lg:text-[48px] font-[600] text-white leading-tight uppercase font-inter transition-all duration-500 group-hover:-translate-y-[180px] md:group-hover:-translate-y-[250px]">МОНТАЖ И ПРОЕКТИРОВАНИЕ</h3>
+                                    <h3 className="text-[18px] sm:text-[24px] md:text-[34px] lg:text-[48px] font-[600] text-white leading-tight uppercase font-inter transition-all duration-500 group-hover:-translate-y-[180px] md:group-hover:-translate-y-[250px]">МОНТАЖ И ПРОЕКТИРОВАНИЕ</h3>
                                     <ul className="mt-4 space-y-2 opacity-0 translate-y-8 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-[-15px] md:group-hover:translate-y-[-30px] font-inter absolute bottom-6 md:bottom-12 left-6 md:left-12 right-6 md:right-12">
                                         {services[2].items.map((item, i) => (
                                             <li key={i} className="text-[14px] md:text-[20px] lg:text-[24px] font-[500] text-white leading-tight flex items-start gap-3">
@@ -665,7 +665,7 @@ const App = () => {
                                         <span key={i}>{word}</span>
                                     ))}
                                 </h3>
-                                <p className="text-[15px] sm:text-[17px] md:text-[18px] lg:text-[20px] xl:text-[18px] 2xl:text-[24px] font-[500] text-[#21243F] leading-[1.3] font-inter break-words w-full px-2">
+                                <p className="text-[18px] sm:text-[17px] md:text-[18px] lg:text-[20px] xl:text-[18px] 2xl:text-[24px] font-[500] text-[#21243F] leading-[1.3] font-inter break-words w-full px-2">
                                     {adv.text}
                                 </p>
                             </motion.div>
@@ -865,18 +865,18 @@ const App = () => {
                     }}
                 />
 
-                <div className="relative z-10 max-w-full mx-auto w-full px-8 lg:px-32 flex flex-col items-start">
+                <div className="relative z-10 max-w-full mx-auto w-full px-6 md:px-8 lg:px-32 flex flex-col items-start">
                     <motion.h2
                         initial={{ opacity: 0, x: -50 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
-                        className="text-[64px] font-[800] leading-tight mb-20 uppercase font-manrope text-left"
+                        className="text-[32px] sm:text-[48px] md:text-[64px] font-[800] leading-tight mb-10 md:mb-20 uppercase font-manrope text-left"
                     >
                         <span className="text-[#21243F]">Отзывы</span> <span className="text-[#F25A18]">наших клиентов</span>
                     </motion.h2>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20 w-full items-stretch">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 mb-12 md:mb-20 w-full items-stretch">
                         {reviews.map((review, index) => (
                             <div key={index} className="w-full flex">
                                 <motion.div
@@ -887,28 +887,28 @@ const App = () => {
                                         duration: 0.6,
                                         delay: index * 0.1
                                     }}
-                                    className="bg-white rounded-[20px] p-8 shadow-[0_4px_25px_rgba(33,36,63,0.3)] flex flex-col border-[0.5px] border-gray-100 min-w-0 w-full aspect-square"
+                                    className="bg-white rounded-[20px] p-6 md:p-8 shadow-[0_4px_25px_rgba(33,36,63,0.3)] flex flex-col border-[0.5px] border-gray-100 min-w-0 w-full aspect-square md:aspect-auto md:min-h-[350px]"
                                 >
-                                    <div className="flex justify-between items-start mb-8 shrink-0">
+                                    <div className="flex justify-between items-start mb-6 md:mb-8 shrink-0">
                                         <div className="flex gap-1 xl:gap-2">
                                             {[...Array(5)].map((_, i) => (
-                                                <svg key={i} className="w-5 h-5 xl:w-7 xl:h-7" viewBox="0 0 24 24" fill="#F25A18">
+                                                <svg key={i} className="w-4 h-4 sm:w-5 sm:h-5 xl:w-7 xl:h-7" viewBox="0 0 24 24" fill="#F25A18">
                                                     <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                                                 </svg>
                                             ))}
                                         </div>
-                                        <svg className="w-10 h-8 xl:w-12 xl:h-10" viewBox="0 0 45 35" fill="none">
+                                        <svg className="w-8 h-6 md:w-10 md:h-8 xl:w-12 xl:h-10" viewBox="0 0 45 35" fill="none">
                                             <path d="M13.5 0C6.04416 0 0 6.04416 0 13.5C0 17.91 2.115 21.825 5.4 24.3L2.7 35H11.7L14.4 24.3C18.225 21.375 20.7 16.74 20.7 11.475C20.7 5.13 17.4825 0 13.5 0ZM37.8 0C30.3442 0 24.3 6.04416 24.3 13.5C24.3 17.91 26.415 21.825 29.7 24.3L27 35H36L38.7 24.3C42.525 21.375 45 16.74 45 11.475C45 5.13 41.7825 0 37.8 0Z" fill="#21243F" />
                                         </svg>
                                     </div>
 
                                     <div className="flex-grow min-h-0 flex flex-col justify-start">
-                                        <p className="text-[12px] sm:text-[14px] md:text-[13px] lg:text-[14px] xl:text-[17px] 2xl:text-[22px] font-[500] text-[#21243F] font-inter leading-[1.25] 2xl:leading-[1.4]">
+                                        <p className="text-[16px] sm:text-[14px] md:text-[13px] lg:text-[14px] xl:text-[17px] 2xl:text-[22px] font-[500] text-[#21243F] font-inter leading-[1.3] 2xl:leading-[1.4]">
                                             {review.text}
                                         </p>
                                     </div>
 
-                                    <p className="text-[16px] xl:text-[20px] 2xl:text-[22px] font-[600] text-[#F25A18] font-inter mt-4 shrink-0">
+                                    <p className="text-[14px] sm:text-[16px] xl:text-[20px] 2xl:text-[22px] font-[600] text-[#F25A18] font-inter mt-4 shrink-0">
                                         {review.name}
                                     </p>
                                 </motion.div>
@@ -924,10 +924,10 @@ const App = () => {
                             transition={{ duration: 0.6 }}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            className="group bg-white rounded-[15px] px-10 py-5 shadow-[0_4px_25px_rgba(33,36,63,0.3)] flex items-center gap-6 transition-all border border-gray-100"
+                            className="group bg-white rounded-[15px] px-6 sm:px-10 py-4 sm:py-5 shadow-[0_4px_25px_rgba(33,36,63,0.3)] flex items-center gap-4 sm:gap-6 transition-all border border-gray-100"
                         >
-                            <div className="flex items-center gap-5">
-                                <div className="w-[45px] h-[45px] flex items-center justify-center">
+                            <div className="flex items-center gap-3 sm:gap-5">
+                                <div className="w-[32px] h-[32px] sm:w-[45px] sm:h-[45px] flex items-center justify-center shrink-0">
                                     <svg viewBox="0 0 40 40" className="w-full h-full">
                                         <circle cx="12" cy="12" r="7" fill="#9358FF" />
                                         <circle cx="28" cy="12" r="6" fill="#00AAFF" />
@@ -935,12 +935,12 @@ const App = () => {
                                         <circle cx="28" cy="26" r="7" fill="#FF5E69" />
                                     </svg>
                                 </div>
-                                <span className="text-[30px] font-[600] text-[#21243F] font-inter transition-colors">
+                                <span className="text-[16px] sm:text-[24px] md:text-[30px] font-[600] text-[#21243F] font-inter transition-colors whitespace-nowrap">
                                     Читать все отзывы на Авито
                                 </span>
                             </div>
-                            <div className="text-[#21243F] transition-transform group-hover:translate-x-2">
-                                <ChevronRight size={36} strokeWidth={2.5} />
+                            <div className="text-[#21243F] transition-transform group-hover:translate-x-2 shrink-0">
+                                <ChevronRight size={windowWidth < 640 ? 24 : 36} strokeWidth={2.5} />
                             </div>
                         </motion.button>
                     </div>
