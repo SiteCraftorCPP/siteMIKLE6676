@@ -9,11 +9,9 @@ const getAsset = (path) => {
     if (!path) return '';
     if (path.startsWith('http') || path.startsWith('data:')) return path;
     
-    // Используем абсолютный URL, включая протокол и домен
-    // Это на 100% исключает ошибки путей на мобилках
-    const origin = window.location.origin;
-    const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-    return `${origin}/${cleanPath}`;
+    // Чистый путь от корня домена
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+    return cleanPath;
 };
 
 const App = () => {
@@ -611,7 +609,7 @@ const App = () => {
                                     className="group relative overflow-hidden rounded-[15px] md:rounded-[20px] bg-black shadow-lg cursor-pointer h-[350px] md:h-[450px] lg:h-[550px]"
                                 >
                                     <div className="absolute inset-0">
-                                        <img src={service.image} alt={service.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70" />
+                                        <img src={getAsset(service.image)} alt={service.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70" />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
                                     </div>
                                     <div className="absolute inset-0 p-6 md:p-10 lg:p-12 flex flex-col justify-end">
@@ -858,7 +856,7 @@ const App = () => {
                                 className={`group relative aspect-[4/3] overflow-hidden rounded-[15px] md:rounded-[20px] bg-[#21243F] cursor-pointer ${index >= visibleWorksCount ? 'hidden' : 'block'}`}
                             >
                                 <img
-                                    src={work.image}
+                                    src={getAsset(work.image)}
                                     alt={work.title}
                                     className="w-full h-full object-cover transition-transform duration-[700ms] ease-out group-hover:scale-110"
                                 />
@@ -1062,11 +1060,11 @@ const App = () => {
                 <div className="max-w-full mx-auto grid grid-cols-1 lg:grid-cols-3 items-center gap-12 lg:gap-8 xl:gap-16">
                     {/* PC VERSION: LOGO (LEFT) */}
                     <div className="hidden lg:flex flex-col items-start transition-transform duration-300">
-                        <img
-                            src={getAsset("image/block9/logo invert.png")}
-                            alt="AT SERVICE"
-                            className="h-[200px] xl:h-[260px] w-auto mb-2"
-                        />
+                                <img
+                                    src={getAsset("image/block9/logo_invert.png")}
+                                    alt="AT SERVICE"
+                                    className="h-[200px] xl:h-[260px] w-auto mb-2"
+                                />
                         <div className="text-white font-manrope font-[800] flex flex-col items-start w-fit lg:ml-4">
                             <h3 className="text-[14px] xl:text-[16px] leading-tight uppercase tracking-[0.04em] whitespace-nowrap">Сервисная служба Истра</h3>
                             <p className="text-[12px] xl:text-[14px] leading-tight mt-1 whitespace-nowrap font-bold tracking-[0.01em]">Обслуживание / Ремонт / Монтаж</p>
@@ -1095,7 +1093,7 @@ const App = () => {
                     {/* MOBILE VERSION */}
                     <div className="flex lg:hidden flex-col items-center text-center w-full">
                         <img
-                            src={getAsset("image/block9/logo invert.png")}
+                            src={getAsset("image/block9/logo_invert.png")}
                             alt="AT SERVICE"
                             className="w-[240px] h-auto mb-4"
                         />
@@ -1153,12 +1151,13 @@ const App = () => {
                         Размещенные данные носят информационный характер и не являются публичной офертой
                     </p>
 
-                    <Link 
-                        to="/privacy" 
+                    <a 
+                        href="/#/privacy" 
                         className="text-white/40 hover:text-[#F25A18] text-[12px] sm:text-[14px] uppercase tracking-widest font-bold transition-all border border-white/10 hover:border-[#F25A18]/50 px-6 py-2 rounded-full inline-block"
+                        onClick={() => setTimeout(() => window.location.reload(), 10)}
                     >
                         Политика конфиденциальности
-                    </Link>
+                    </a>
                 </div>
             </footer>
             
