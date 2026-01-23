@@ -1,6 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, Menu, X } from 'lucide-react';
+import CookieConsent from './CookieConsent';
+
+// Вспомогательная функция для путей к изображениям
+// Вынесена из компонента для стабильности
+const getAsset = (path) => {
+    if (!path) return '';
+    if (path.startsWith('http') || path.startsWith('data:')) return path;
+    
+    // Гарантируем абсолютный путь от корня
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+    return cleanPath;
+};
 
 const App = () => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -9,16 +22,27 @@ const App = () => {
     const [visibleWorksCount, setVisibleWorksCount] = useState(3);
 
     useEffect(() => {
+        // Принудительный скролл наверх при монтировании
+        window.scrollTo(0, 0);
+        
         const handleResize = () => setWindowWidth(window.innerWidth);
         const handleScroll = () => {
-            // Trigger scrolled state immediately on scroll
             setIsScrolled(window.scrollY > 10);
         };
+
+        // Вызываем сразу для установки начального состояния
+        handleScroll();
+        
         window.addEventListener('scroll', handleScroll);
         window.addEventListener('resize', handleResize);
+        
+        // Небольшой таймаут для проверки скролла после рендеринга (фикс для восстановления позиции)
+        const timeoutId = setTimeout(handleScroll, 100);
+
         return () => {
             window.removeEventListener('scroll', handleScroll);
             window.removeEventListener('resize', handleResize);
+            clearTimeout(timeoutId);
         };
     }, []);
 
@@ -31,7 +55,9 @@ const App = () => {
         'Контакты': 'contacts'
     };
 
-    const services = [
+    // getAsset moved outside component
+
+    const [services, setServices] = useState([
         {
             title: 'РЕМОНТ',
             image: '/image/block3/foto1.jpg',
@@ -63,7 +89,7 @@ const App = () => {
                 'Монтаж радиаторов и теплого пола'
             ]
         }
-    ];
+    ]);
 
     const advantages = [
         {
@@ -88,7 +114,7 @@ const App = () => {
         }
     ];
 
-    const works = [
+    const [works, setWorks] = useState([
         {
             title: 'Монтаж котельной на базе Vaillant д. Снегири',
             image: '/image/block6/foto4.jpg'
@@ -113,7 +139,59 @@ const App = () => {
             title: 'Монтаж котельной под ключ с. Рождествено',
             image: '/image/block6/foto9.jpg'
         }
-    ];
+    ]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            let baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:1337';
+            
+            // Fix for mixed content (http vs https) on production
+            if (window.location.protocol === 'https:' && baseUrl.startsWith('http:')) {
+                baseUrl = baseUrl.replace('http:', 'https:');
+            }
+            
+            // Загрузка работ
+            try {
+                const resWorks = await fetch(`${baseUrl}/api/rabotas?populate=*`);
+                const jsonWorks = await resWorks.json();
+                
+                if (jsonWorks.data && jsonWorks.data.length > 0) {
+                    const formatted = jsonWorks.data.map(item => {
+                        // Обработка данных для Strapi 4 и Strapi 5
+                        const attrs = item.attributes || item;
+                        const imageData = attrs.image?.data?.attributes || attrs.image;
+                        
+                        return {
+                            title: attrs.title,
+                            image: imageData?.url ? `${baseUrl}${imageData.url}` : getAsset('image/block6/foto4.jpg')
+                        };
+                    });
+                    setWorks(formatted);
+                }
+            } catch (e) { console.log('Rabota API error', e); }
+
+            // Загрузка услуг
+            try {
+                const resServices = await fetch(`${baseUrl}/api/uslugas?populate=*`);
+                const jsonServices = await resServices.json();
+                
+                if (jsonServices.data && jsonServices.data.length > 0) {
+                    const formatted = jsonServices.data.map(item => {
+                        const attrs = item.attributes || item;
+                        const imageData = attrs.image?.data?.attributes || attrs.image;
+                        
+                        return {
+                            title: attrs.title,
+                            image: imageData?.url ? `${baseUrl}${imageData.url}` : getAsset('image/block3/foto1.jpg'),
+                            items: Array.isArray(attrs.items) ? attrs.items : []
+                        };
+                    });
+                    setServices(formatted);
+                }
+            } catch (e) { console.log('Usluga API error', e); }
+        };
+        fetchData();
+    }, []);
 
     // Remove the previous redundant preload effect since we added a better one above
 
@@ -193,15 +271,17 @@ const App = () => {
                             <div className="relative flex items-center justify-start" style={{ width: windowWidth < 640 ? '80px' : '100px', height: windowWidth < 640 ? '80px' : '100px' }}>
                                 {/* Logo 1 (White - always present) */}
                                 <img
-                                    src="/image/block1i2iShapka/logo1.png"
+                                    src={getAsset("image/block1i2iShapka/logo1.png")}
                                     alt="Logo White"
                                     className={`absolute left-0 w-auto h-full object-contain transition-opacity duration-300 ${isScrolled ? 'opacity-0' : 'opacity-100'}`}
+                                    style={{ opacity: isScrolled ? 0 : 1 }}
                                 />
                                 {/* Logo 2 (Dark - always present) */}
                                 <img
-                                    src="/image/block3/logo2.png"
+                                    src={getAsset("image/block3/logo2.png")}
                                     alt="Logo Dark"
                                     className={`absolute left-0 w-auto h-full object-contain transition-opacity duration-300 ${isScrolled ? 'opacity-100' : 'opacity-0'}`}
+                                    style={{ opacity: isScrolled ? 1 : 0 }}
                                 />
                             </div>
                             <div className={`flex flex-col justify-center items-stretch w-fit -ml-1 transition-all duration-300 ${isScrolled ? 'text-[#21243F]' : 'text-white'}`}>
@@ -233,7 +313,7 @@ const App = () => {
                                         y: isScrolled ? 10 : 28
                                     }}
                                     transition={{ duration: 0.3 }}
-                                    src="/image/block1i2iShapka/logo1.png"
+                                    src={getAsset("image/block1i2iShapka/logo1.png")}
                                     className="w-auto opacity-0"
                                     alt=""
                                 />
@@ -246,7 +326,7 @@ const App = () => {
                                         y: isScrolled ? 10 : 28
                                     }}
                                     transition={{ duration: 0.3 }}
-                                    src="/image/block1i2iShapka/logo1.png"
+                                    src={getAsset("image/block1i2iShapka/logo1.png")}
                                     alt=""
                                     className="h-full w-auto absolute left-0 top-0 object-contain pointer-events-none"
                                 />
@@ -259,7 +339,7 @@ const App = () => {
                                         y: isScrolled ? 10 : 28
                                     }}
                                     transition={{ duration: 0.3 }}
-                                    src="/image/block3/logo2.png"
+                                    src={getAsset("image/block3/logo2.png")}
                                     alt=""
                                     className="h-full w-auto absolute left-0 top-0 object-contain pointer-events-none"
                                 />
@@ -319,9 +399,9 @@ const App = () => {
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                     >
                         {isMobileMenuOpen ? (
-                            <X size={windowWidth < 768 ? 28 : 36} className="text-[#21243F]" />
+                            <X size={windowWidth < 768 ? 28 : 36} className="text-[#21243F]" style={{ color: '#21243F' }} />
                         ) : (
-                            <Menu size={windowWidth < 768 ? 28 : 36} className={isScrolled ? 'text-[#21243F]' : 'text-white'} />
+                            <Menu size={windowWidth < 768 ? 28 : 36} className={isScrolled ? 'text-[#21243F]' : 'text-white'} style={{ color: isScrolled ? '#21243F' : '#ffffff' }} />
                         )}
                     </button>
                 </div>
@@ -406,14 +486,14 @@ const App = () => {
                 >
                     <div className="absolute inset-0 bg-black/45 z-10" />
                     <img
-                        src="/image/block1i2iShapka/fon1.jpg"
+                        src={getAsset("image/block1i2iShapka/fon1.jpg")}
                         alt="Engineer at work"
                         className="w-full h-full object-cover object-[25%_center] md:object-center"
                     />
                 </motion.div>
 
                 {/* Hero Content */}
-                <div className="relative z-20 w-full px-4 sm:px-8 lg:px-20 pt-[220px] sm:pt-[280px] md:pt-[340px] lg:translate-x-[35px]">
+                <div className="relative z-20 w-full px-4 sm:px-8 lg:px-20 pt-[160px] sm:pt-[210px] md:pt-[340px] lg:translate-x-[35px]">
                     <motion.div
                         initial="hidden"
                         animate="visible"
@@ -428,9 +508,10 @@ const App = () => {
                                 visible: { opacity: 1, y: 0 }
                             }}
                             transition={{ duration: 0.8 }}
-                            className="text-[32px] sm:text-[48px] md:text-[90px] lg:text-[120px] font-[800] text-white leading-[1.1] md:leading-[0.95] mb-6 sm:mb-10 md:mb-14 uppercase tracking-tighter"
+                            className="text-[32px] sm:text-[48px] md:text-[90px] lg:text-[100px] font-[800] text-white leading-[1.1] md:leading-[0.95] mb-6 sm:mb-10 md:mb-14 uppercase tracking-tighter"
                         >
-                            ИНЖЕНЕРНЫЕ СИСТЕМЫ<br />
+                            Профессиональный ремонт, монтаж и<br />
+                            обслуживание отопления и водоснабжения.<br />
                             <span className="text-[#F26E35] inline-block mt-2 md:mt-4">В ИСТРИНСКОМ РАЙОНЕ</span>
                         </motion.h1>
 
@@ -442,7 +523,7 @@ const App = () => {
                             transition={{ duration: 0.8 }}
                             className="text-[16px] sm:text-[22px] md:text-[36px] lg:text-[46px] font-[600] text-white/95 max-w-[1300px] leading-[1.3] md:leading-[1.25] mb-10 sm:mb-14 md:mb-24"
                         >
-                            Профессиональный ремонт, монтаж и<br className="hidden md:block" /> обслуживание отопления и водоснабжения.<br className="hidden md:block" /> Гарантия на работы и аварийные выезды
+                            Гарантия на работы и аварийные выезды
                         </motion.p>
 
                         <motion.div
@@ -489,7 +570,7 @@ const App = () => {
                 <div
                     className="absolute inset-0 z-0 pointer-events-none"
                     style={{
-                        backgroundImage: 'url("/image/block3/fon2.jpg")',
+                        backgroundImage: `url(${getAsset("image/block3/fon2.jpg")})`,
                         backgroundAttachment: windowWidth < 1024 ? 'scroll' : 'fixed',
                         backgroundPosition: 'center',
                         backgroundSize: 'cover',
@@ -505,92 +586,43 @@ const App = () => {
                         transition={{ duration: 0.8 }}
                         className="text-[28px] sm:text-[48px] md:text-[64px] font-[800] leading-[1.1] text-[#21243F] mb-8 sm:mb-[70px] uppercase font-manrope"
                     >
-                        Профессиональная забота о вашем доме:<br className="hidden md:block" />
-                        <span className="text-[#F25A18]"> монтаж, ремонт и обслуживание систем</span>
+                        Профессиональная забота о вашем доме: <span className="text-[#F25A18]">монтаж</span><br className="hidden md:block" />
+                        <span className="text-[#F25A18]"> ремонт и обслуживание систем отопления и водоснабжения</span>
                     </motion.h2>
 
                     {/* Services Grid - Fixed aspect ratio cards, smaller overall */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 lg:gap-20 items-stretch w-full">
-                        {/* 1. РЕМОНТ */}
-                        <div className="relative z-30">
-                            <motion.div
-                                initial={{ opacity: 0, x: -20 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.6 }}
-                                className="group relative overflow-hidden rounded-[15px] md:rounded-[20px] bg-black shadow-lg cursor-pointer h-[350px] md:h-[450px] lg:h-[550px]"
-                            >
-                                <div className="absolute inset-0">
-                                    <img src="/image/block3/foto1.jpg" alt="РЕМОНТ" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70" />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-                                </div>
-                                <div className="absolute inset-0 p-6 md:p-10 lg:p-12 flex flex-col justify-end">
-                                    <h3 className="text-[18px] sm:text-[24px] md:text-[36px] lg:text-[48px] font-[600] text-white leading-tight uppercase font-inter transition-all duration-500 group-hover:-translate-y-[180px] md:group-hover:-translate-y-[250px]">РЕМОНТ</h3>
-                                    <ul className="mt-4 space-y-2 opacity-0 translate-y-8 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-[-15px] md:group-hover:translate-y-[-30px] font-inter absolute bottom-6 md:bottom-12 left-6 md:left-12 right-6 md:right-12">
-                                        {services[0].items.map((item, i) => (
-                                            <li key={i} className="text-[14px] md:text-[20px] lg:text-[24px] font-[500] text-white leading-tight flex items-start gap-3">
-                                                <svg width="22" height="18" viewBox="0 0 18 14" fill="none" className="mt-1 shrink-0 w-4 h-4 md:w-6 md:h-5"><path d="M1 7L6 12L17 1" stroke="#F25A18" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                                                {item}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </motion.div>
-                        </div>
-
-                        {/* 2. ОБСЛУЖИВАНИЕ */}
-                        <div className="relative z-30">
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.6, delay: 0.2 }}
-                                className="group relative overflow-hidden rounded-[15px] md:rounded-[20px] bg-black shadow-lg cursor-pointer h-[350px] md:h-[450px] lg:h-[550px]"
-                            >
-                                <div className="absolute inset-0">
-                                    <img src="/image/block3/foto2.jpg" alt="ОБСЛУЖИВАНИЕ" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70" />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-                                </div>
-                                <div className="absolute inset-0 p-6 md:p-10 lg:p-12 flex flex-col justify-end">
-                                    <h3 className="text-[18px] sm:text-[24px] md:text-[36px] lg:text-[48px] font-[600] text-white leading-tight uppercase font-inter transition-all duration-500 group-hover:-translate-y-[180px] md:group-hover:-translate-y-[250px]">ОБСЛУЖИВАНИЕ</h3>
-                                    <ul className="mt-4 space-y-2 opacity-0 translate-y-8 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-[-15px] md:group-hover:translate-y-[-30px] font-inter absolute bottom-6 md:bottom-12 left-6 md:left-12 right-6 md:right-12">
-                                        {services[1].items.map((item, i) => (
-                                            <li key={i} className="text-[14px] md:text-[20px] lg:text-[24px] font-[500] text-white leading-tight flex items-start gap-3">
-                                                <svg width="22" height="18" viewBox="0 0 18 14" fill="none" className="mt-1 shrink-0 w-4 h-4 md:w-6 md:h-5"><path d="M1 7L6 12L17 1" stroke="#F25A18" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                                                {item}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </motion.div>
-                        </div>
-
-                        {/* 3. МОНТАЖ И ПРОЕКТИРОВАНИЕ */}
-                        <div className="relative z-30">
-                            <motion.div
-                                initial={{ opacity: 0, x: -20 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.6, delay: 0.4 }}
-                                className="group relative overflow-hidden rounded-[15px] md:rounded-[20px] bg-black shadow-lg cursor-pointer h-[350px] md:h-[450px] lg:h-[550px]"
-                            >
-                                <div className="absolute inset-0">
-                                    <img src="/image/block3/foto3.jpg" alt="МОНТАЖ" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70" />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-                                </div>
-                                <div className="absolute inset-0 p-6 md:p-10 lg:p-12 flex flex-col justify-end">
-                                    <h3 className="text-[18px] sm:text-[24px] md:text-[34px] lg:text-[48px] font-[600] text-white leading-tight uppercase font-inter transition-all duration-500 group-hover:-translate-y-[180px] md:group-hover:-translate-y-[250px]">МОНТАЖ И ПРОЕКТИРОВАНИЕ</h3>
-                                    <ul className="mt-4 space-y-2 opacity-0 translate-y-8 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-[-15px] md:group-hover:translate-y-[-30px] font-inter absolute bottom-6 md:bottom-12 left-6 md:left-12 right-6 md:right-12">
-                                        {services[2].items.map((item, i) => (
-                                            <li key={i} className="text-[14px] md:text-[20px] lg:text-[24px] font-[500] text-white leading-tight flex items-start gap-3">
-                                                <svg width="22" height="18" viewBox="0 0 18 14" fill="none" className="mt-1 shrink-0 w-4 h-4 md:w-6 md:h-5"><path d="M1 7L6 12L17 1" stroke="#F25A18" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                                                {item}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </motion.div>
-                        </div>
+                        {services.map((service, index) => (
+                            <div key={index} className="relative z-30">
+                                <motion.div
+                                    initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.6, delay: index * 0.2 }}
+                                    className="group relative overflow-hidden rounded-[15px] md:rounded-[20px] bg-black shadow-lg cursor-pointer h-[350px] md:h-[450px] lg:h-[550px]"
+                                >
+                                    <div className="absolute inset-0">
+                                        <img src={service.image} alt={service.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                                    </div>
+                                    <div className="absolute inset-0 p-6 md:p-10 lg:p-12 flex flex-col justify-end">
+                                        <h3 className="text-[18px] sm:text-[24px] md:text-[36px] lg:text-[48px] font-[600] text-white leading-tight uppercase font-inter transition-all duration-500 group-hover:-translate-y-[180px] md:group-hover:-translate-y-[250px]">
+                                            {service.title}
+                                        </h3>
+                                        <ul className="mt-4 space-y-2 opacity-0 translate-y-8 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-[-15px] md:group-hover:translate-y-[-30px] font-inter absolute bottom-6 md:bottom-12 left-6 md:left-12 right-6 md:right-12">
+                                            {Array.isArray(service.items) && service.items.map((item, i) => (
+                                                <li key={i} className="text-[14px] md:text-[20px] lg:text-[24px] font-[500] text-white leading-tight flex items-start gap-3">
+                                                    <svg width="22" height="18" viewBox="0 0 18 14" fill="none" className="mt-1 shrink-0 w-4 h-4 md:w-6 md:h-5">
+                                                        <path d="M1 7L6 12L17 1" stroke="#F25A18" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                                                    </svg>
+                                                    {item}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </motion.div>
+                            </div>
+                        ))}
 
                         {/* 4. CTA Card */}
                         <div className="relative z-30">
@@ -608,7 +640,7 @@ const App = () => {
                                     </div>
                                     <div className="flex items-start gap-4">
                                         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="shrink-0 mt-1"><circle cx="16" cy="16" r="14" stroke="#F25A18" strokeWidth="2" /><path d="M9 16L14 21L23 11" stroke="#F25A18" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                                        <p className="text-[18px] md:text-[26px] lg:text-[32px] font-[500] text-[#21243F] leading-tight font-inter">Выполним профессиональный монтаж инженерных систем с гарантией на работы</p>
+                                        <p className="text-[18px] md:text-[26px] lg:text-[32px] font-[500] text-[#21243F] leading-tight font-inter">Выполним профессиональный монтаж систем отопления и водоснабжения с гарантией на работы</p>
                                     </div>
                                 </div>
                                 <motion.a
@@ -631,7 +663,7 @@ const App = () => {
                 <div
                     className="absolute inset-0 z-0 pointer-events-none"
                     style={{
-                        backgroundImage: 'url("/image/block3/fon2.jpg")',
+                        backgroundImage: `url(${getAsset("image/block3/fon2.jpg")})`,
                         backgroundAttachment: windowWidth < 1024 ? 'scroll' : 'fixed',
                         backgroundPosition: 'center',
                         backgroundSize: 'cover',
@@ -693,7 +725,7 @@ const App = () => {
                 <div
                     className="absolute inset-0 z-0 pointer-events-none"
                     style={{
-                        backgroundImage: 'url("/image/block3/fon2.jpg")',
+                        backgroundImage: `url(${getAsset("image/block3/fon2.jpg")})`,
                         backgroundAttachment: windowWidth < 1024 ? 'scroll' : 'fixed',
                         backgroundPosition: 'center',
                         backgroundSize: 'cover',
@@ -784,7 +816,7 @@ const App = () => {
                 <div
                     className="absolute inset-0 z-0 pointer-events-none"
                     style={{
-                        backgroundImage: 'url("/image/block3/fon2.jpg")',
+                        backgroundImage: `url(${getAsset("image/block3/fon2.jpg")})`,
                         backgroundAttachment: windowWidth < 1024 ? 'scroll' : 'fixed',
                         backgroundPosition: 'center',
                         backgroundSize: 'cover',
@@ -857,7 +889,7 @@ const App = () => {
                 <div
                     className="absolute inset-0 z-0 pointer-events-none"
                     style={{
-                        backgroundImage: 'url("/image/block3/fon2.jpg")',
+                        backgroundImage: `url(${getAsset("image/block3/fon2.jpg")})`,
                         backgroundAttachment: 'fixed',
                         backgroundPosition: 'center',
                         backgroundSize: 'cover',
@@ -953,7 +985,7 @@ const App = () => {
                 <div
                     className="absolute inset-0 z-0 pointer-events-none"
                     style={{
-                        backgroundImage: 'url("/image/block3/fon2.jpg")',
+                        backgroundImage: `url(${getAsset("image/block3/fon2.jpg")})`,
                         backgroundAttachment: windowWidth < 1024 ? 'scroll' : 'fixed',
                         backgroundPosition: 'center',
                         backgroundSize: 'cover',
@@ -1018,65 +1050,110 @@ const App = () => {
 
             {/* Footer / Closing Contact Section */}
             <footer id="contacts" className="bg-[#21243F] pt-20 pb-20 px-6 md:px-12 lg:px-48 xl:px-64 w-full relative z-20 mb-0 overflow-hidden">
-                <div className="max-w-full mx-auto flex flex-col lg:flex-row justify-between items-start gap-12 lg:gap-32">
-                    {/* PC VERSION (RESTORING ORIGINAL) */}
-                    <div className="hidden lg:flex flex-col items-center lg:items-start text-center lg:text-left scale-[1.0] sm:scale-[1.3] lg:scale-[1.6] origin-center lg:origin-left pt-0 transition-transform duration-300">
+                <div className="max-w-full mx-auto grid grid-cols-1 lg:grid-cols-3 items-center gap-12 lg:gap-8 xl:gap-16">
+                    {/* PC VERSION: LOGO (LEFT) */}
+                    <div className="hidden lg:flex flex-col items-start transition-transform duration-300">
                         <img
-                            src="/image/block9/logo invert.png"
+                            src={getAsset("image/block9/logo invert.png")}
                             alt="AT SERVICE"
-                            className="h-[250px] sm:h-[400px] lg:h-[550px] w-auto -mt-6 sm:-mt-10 lg:-mt-12 mb-2 sm:-mb-24 lg:-mb-36 -ml-0 lg:-ml-12"
+                            className="h-[200px] xl:h-[260px] w-auto mb-2"
                         />
-                        <div className="text-white font-manrope font-[800] flex flex-col items-center ml-0 lg:ml-[72px] w-fit">
-                            <h3 className="text-[14px] sm:text-[15px] lg:text-[16.5px] leading-tight uppercase tracking-[0.04em] whitespace-nowrap">Сервисная служба Истра</h3>
-                            <p className="text-[12px] sm:text-[13px] lg:text-[14.5px] leading-tight mt-1 whitespace-nowrap font-bold tracking-[0.01em]">Обслуживание / Ремонт / Монтаж</p>
+                        <div className="text-white font-manrope font-[800] flex flex-col items-start w-fit lg:ml-4">
+                            <h3 className="text-[14px] xl:text-[16px] leading-tight uppercase tracking-[0.04em] whitespace-nowrap">Сервисная служба Истра</h3>
+                            <p className="text-[12px] xl:text-[14px] leading-tight mt-1 whitespace-nowrap font-bold tracking-[0.01em]">Обслуживание / Ремонт / Монтаж</p>
                         </div>
                     </div>
 
-                    {/* MOBILE VERSION (NEW) */}
+                    {/* РЕКВИЗИТЫ ДЛЯ DESKTOP (CENTER) */}
+                    <div className="hidden lg:flex flex-col items-center justify-center w-full">
+                        <div className="flex flex-col gap-6 text-[#515678] text-[13px] xl:text-[14px] font-semibold font-inter border-x border-white/5 px-10 xl:px-14 py-4">
+                            <div className="flex flex-col gap-0.5">
+                                <p className="text-white/30 uppercase text-[10px] xl:text-[11px] tracking-widest mb-1">Реквизиты:</p>
+                                <p>ИП Бойкова Эльмира Викторовна</p>
+                                <p>ИНН: 500406181094</p>
+                                <p>ОГРНИП: 323774600215139</p>
+                                <p>ОКПО: 2021605256</p>
+                            </div>
+                            <div className="flex flex-col gap-0.5">
+                                <p className="text-white/30 uppercase text-[10px] xl:text-[11px] tracking-widest mb-1">Банк:</p>
+                                <p>БАНК ВТБ (ПАО) / БИК: 44525411</p>
+                                <p className="break-all">Р/С: 40802810223710000000</p>
+                                <p className="break-all">К/С: 30101810145250000000</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* MOBILE VERSION */}
                     <div className="flex lg:hidden flex-col items-center text-center w-full">
                         <img
-                            src="/image/block9/logo invert.png"
+                            src={getAsset("image/block9/logo invert.png")}
                             alt="AT SERVICE"
-                            className="w-[280px] h-auto mb-4"
+                            className="w-[240px] h-auto mb-4"
                         />
                         <div className="text-white font-manrope font-[800] flex flex-col items-center">
-                            <h3 className="text-[22px] leading-tight uppercase tracking-[0.04em] whitespace-nowrap">Сервисная служба Истра</h3>
-                            <p className="text-[16px] leading-tight mt-1 whitespace-nowrap font-bold tracking-[0.01em] opacity-90">Обслуживание / Ремонт / Монтаж</p>
+                            <h3 className="text-[20px] leading-tight uppercase tracking-[0.04em] whitespace-nowrap">Сервисная служба Истра</h3>
+                            <p className="text-[14px] leading-tight mt-1 whitespace-nowrap font-bold tracking-[0.01em] opacity-90">Обслуживание / Ремонт / Монтаж</p>
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-8 sm:gap-12 lg:gap-16 text-center lg:text-right w-full lg:w-auto items-center lg:items-end pr-0 lg:pr-4 lg:-mt-4">
+                    {/* CONTACTS (RIGHT) */}
+                    <div className="flex flex-col gap-8 xl:gap-12 text-center lg:text-right w-full lg:w-auto items-center lg:items-end pr-0 lg:pr-4">
                         <div className="flex flex-col items-center lg:items-end">
-                            <h4 className="text-[#F25A18] text-[18px] sm:text-[22px] lg:text-[24px] font-semibold font-inter mb-2 sm:mb-3">Адрес:</h4>
-                            <p className="text-white text-[18px] sm:text-[22px] lg:text-[24px] font-semibold font-inter leading-tight">
+                            <h4 className="text-[#F25A18] text-[18px] xl:text-[22px] font-semibold font-inter mb-1 xl:mb-2">Адрес:</h4>
+                            <p className="text-white text-[18px] xl:text-[22px] font-semibold font-inter leading-tight">
                                 Московская область, Истринский район,<br />
                                 с. Лучинское, ул. Железнодорожная д. 62 Б
                             </p>
                         </div>
 
                         <div className="flex flex-col items-center lg:items-end">
-                            <h4 className="text-[#F25A18] text-[18px] sm:text-[22px] lg:text-[24px] font-semibold font-inter mb-2 sm:mb-3">Телефон:</h4>
-                            <a href="tel:+79776189906" className="text-white text-[28px] sm:text-[36px] lg:text-[42px] font-semibold font-inter hover:text-[#F25A18] transition-colors leading-none tracking-tight">
+                            <h4 className="text-[#F25A18] text-[18px] xl:text-[22px] font-semibold font-inter mb-1 xl:mb-2">Телефон:</h4>
+                            <a href="tel:+79776189906" className="text-white text-[28px] xl:text-[42px] font-semibold font-inter hover:text-[#F25A18] transition-colors leading-none tracking-tight">
                                 +7 (977) 618-99-06
                             </a>
                         </div>
 
                         <div className="flex flex-col items-center lg:items-end">
-                            <h4 className="text-[#F25A18] text-[18px] sm:text-[22px] lg:text-[24px] font-semibold font-inter mb-4 sm:mb-5">Режим работы:</h4>
-                            <p className="text-white text-[18px] sm:text-[22px] lg:text-[24px] font-semibold font-inter leading-none">
+                            <h4 className="text-[#F25A18] text-[18px] xl:text-[22px] font-semibold font-inter mb-2 xl:mb-3">Режим работы:</h4>
+                            <p className="text-white text-[18px] xl:text-[22px] font-semibold font-inter leading-none">
                                 ПН.- ВС. 9:00-21:00
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <div className="mt-10 lg:mt-16 text-center lg:text-right pb-10 px-6">
-                    <p className="text-[#515678] text-[14px] sm:text-[18px] lg:text-[22px] font-semibold font-inter max-w-none ml-auto leading-relaxed lg:leading-tight">
-                        Размещенные данные носят информационный<br className="block lg:block" />
-                        характер и не являются публичной офертой
+                <div className="mt-16 text-center pb-10 px-6 max-w-4xl mx-auto border-t border-white/10 pt-10">
+                    <div className="lg:hidden grid grid-cols-1 md:grid-cols-2 gap-6 text-[#515678] text-[14px] md:text-[16px] font-semibold font-inter mb-10">
+                        <div className="flex flex-col gap-1">
+                            <p className="text-white/80 uppercase text-[12px] tracking-wider mb-1">Реквизиты:</p>
+                            <p>ИП Бойкова Эльмира Викторовна</p>
+                            <p>ИНН: 500406181094</p>
+                            <p>ОГРНИП: 323774600215139</p>
+                            <p>ОКПО: 2021605256</p>
+                        </div>
+                        <div className="flex flex-col gap-1">
+                            <p className="text-white/80 uppercase text-[12px] tracking-wider mb-1">Банковские данные:</p>
+                            <p>Банк: БАНК ВТБ (ПАО)</p>
+                            <p>БИК: 44525411</p>
+                            <p>Корр. счет: 30101810145250000000</p>
+                            <p>Расчетный счет: 40802810223710000000</p>
+                        </div>
+                    </div>
+                    
+                    <p className="text-[#515678] text-[14px] sm:text-[16px] lg:text-[18px] font-semibold font-inter max-w-none leading-relaxed opacity-60 mb-6">
+                        Размещенные данные носят информационный характер и не являются публичной офертой
                     </p>
+
+                    <Link 
+                        to="/privacy" 
+                        className="text-white/40 hover:text-[#F25A18] text-[12px] sm:text-[14px] uppercase tracking-widest font-bold transition-all border border-white/10 hover:border-[#F25A18]/50 px-6 py-2 rounded-full inline-block"
+                    >
+                        Политика конфиденциальности
+                    </Link>
                 </div>
             </footer>
+            
+            <CookieConsent />
         </div>
     );
 };

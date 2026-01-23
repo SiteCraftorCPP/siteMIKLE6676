@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "rabotas",
+  "info": {
+    "singularName": "rabota",
+    "pluralName": "rabotas",
+    "displayName": "Работа",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  }
+}

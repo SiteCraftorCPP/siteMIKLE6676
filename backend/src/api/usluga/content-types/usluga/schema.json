@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "uslugas",
+  "info": {
+    "singularName": "usluga",
+    "pluralName": "uslugas",
+    "displayName": "Услуга",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "items": {
+      "type": "json"
+    }
+  }
+}
