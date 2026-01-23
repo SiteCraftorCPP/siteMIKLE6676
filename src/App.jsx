@@ -1151,13 +1151,12 @@ const App = () => {
                         Размещенные данные носят информационный характер и не являются публичной офертой
                     </p>
 
-                    <a 
-                        href="/#/privacy" 
+                    <Link 
+                        to="/privacy" 
                         className="text-white/40 hover:text-[#F25A18] text-[12px] sm:text-[14px] uppercase tracking-widest font-bold transition-all border border-white/10 hover:border-[#F25A18]/50 px-6 py-2 rounded-full inline-block"
-                        onClick={() => setTimeout(() => window.location.reload(), 10)}
                     >
                         Политика конфиденциальности
-                    </a>
+                    </Link>
                 </div>
             </footer>
             
