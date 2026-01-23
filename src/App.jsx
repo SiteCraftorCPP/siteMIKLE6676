@@ -143,14 +143,22 @@ const App = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            let baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:1337';
+            // Пытаемся определить URL API автоматически
+            let baseUrl = import.meta.env.VITE_API_URL;
+            
+            if (!baseUrl) {
+                // Если переменная не задана, используем текущий хост, но с портом 1337
+                const protocol = window.location.protocol;
+                const hostname = window.location.hostname;
+                baseUrl = `${protocol}//${hostname}:1337`;
+            }
             
             // Fix for mixed content (http vs https) on production
             if (window.location.protocol === 'https:' && baseUrl.startsWith('http:')) {
                 baseUrl = baseUrl.replace('http:', 'https:');
             }
             
-            // Загрузка работ
+            console.log('Fetching from API:', baseUrl);
             try {
                 const resWorks = await fetch(`${baseUrl}/api/rabotas?populate=*`);
                 const jsonWorks = await resWorks.json();
