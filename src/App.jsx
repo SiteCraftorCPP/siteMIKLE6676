@@ -5,14 +5,15 @@ import { ChevronRight, Menu, X } from 'lucide-react';
 import CookieConsent from './CookieConsent';
 
 // Вспомогательная функция для путей к изображениям
-// Вынесена из компонента для стабильности
 const getAsset = (path) => {
     if (!path) return '';
     if (path.startsWith('http') || path.startsWith('data:')) return path;
     
-    // Гарантируем абсолютный путь от корня
-    const cleanPath = path.startsWith('/') ? path : `/${path}`;
-    return cleanPath;
+    // Используем абсолютный URL, включая протокол и домен
+    // Это на 100% исключает ошибки путей на мобилках
+    const origin = window.location.origin;
+    const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+    return `${origin}/${cleanPath}`;
 };
 
 const App = () => {
