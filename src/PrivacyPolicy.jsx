@@ -13,9 +13,9 @@ const PrivacyPolicy = () => {
             {/* Header / Nav */}
             <nav className="fixed top-0 left-0 w-full z-50 bg-[#21243F]/80 backdrop-blur-md border-b border-white/5 px-6 py-4">
                 <div className="max-w-4xl mx-auto flex justify-between items-center">
-                    <a href="/" className="flex items-center gap-2 text-white/60 hover:text-[#F25A18] transition-colors font-bold uppercase tracking-wider text-[14px]" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                    <Link to="/" className="flex items-center gap-2 text-white/60 hover:text-[#F25A18] transition-colors font-bold uppercase tracking-wider text-[14px]" style={{ color: 'rgba(255,255,255,0.6)' }}>
                         <ArrowLeft size={20} style={{ minWidth: '20px' }} /> На главную
-                    </a>
+                    </Link>
                     <div className="text-[12px] text-white/30 font-bold uppercase tracking-[0.2em]">
                         АТ-СЕРВИС
                     </div>

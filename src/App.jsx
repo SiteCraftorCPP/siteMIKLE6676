@@ -146,21 +146,16 @@ const App = () => {
             let baseUrl = import.meta.env.VITE_API_URL;
             
             if (!baseUrl) {
-                // Если переменная не задана, используем текущий хост, но с портом 1337
-                // Убираем возможную точку в конце домена
-                const hostname = window.location.hostname.replace(/\.$/, '');
-                baseUrl = `http://${hostname}:1337`;
+                // Если мы на реальном домене (не localhost), используем относительные пути.
+                // Это позволит Nginx проксировать запросы и избежать Mixed Content (HTTPS -> HTTP).
+                if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+                    baseUrl = ''; 
+                } else {
+                    baseUrl = 'http://localhost:1337';
+                }
             }
             
-            // Если baseUrl уже содержит https или мы не на порту 1337, оставляем как есть.
-            // Но если мы на HTTPS и пытаемся достучаться до 1337 - принудительно используем http,
-            // чтобы избежать ERR_CONNECTION_REFUSED. 
-            // (В идеале это должен решать Nginx Proxy)
-            if (window.location.protocol === 'https:' && baseUrl.includes(':1337') && baseUrl.startsWith('https:')) {
-                baseUrl = baseUrl.replace('https:', 'http:');
-            }
-            
-            console.log('Fetching from API:', baseUrl);
+            console.log('API URL Mode:', baseUrl === '' ? 'Relative (Nginx Proxy)' : baseUrl);
             try {
                 const resWorks = await fetch(`${baseUrl}/api/rabotas?populate=*`);
                 const jsonWorks = await resWorks.json();

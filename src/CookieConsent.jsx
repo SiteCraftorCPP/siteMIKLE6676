@@ -41,9 +41,9 @@ const CookieConsent = () => {
                             </div>
                             <p className="text-white/90 font-inter text-[13px] sm:text-[14px] md:text-[15px] text-center md:text-left leading-relaxed">
                                 Мы используем файлы cookie для улучшения работы сайта и анализа трафика. Продолжая использовать сайт, вы соглашаетесь с нашей{' '}
-                                <a href="/#/privacy" className="text-[#F25A18] hover:text-white transition-colors font-bold underline decoration-[#F25A18]/50 underline-offset-4" onClick={() => setTimeout(() => window.location.reload(), 10)}>
+                                <Link to="/privacy" className="text-[#F25A18] hover:text-white transition-colors font-bold underline decoration-[#F25A18]/50 underline-offset-4">
                                     Политикой конфиденциальности
-                                </a>.
+                                </Link>.
                             </p>
                         </div>
                         <button
