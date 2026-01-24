@@ -180,14 +180,23 @@ const App = () => {
                 const jsonWorks = await resWorks.json();
                 
                 if (jsonWorks.data && jsonWorks.data.length > 0) {
-                    const formatted = jsonWorks.data.map(item => {
-                        // Обработка данных для Strapi 4 и Strapi 5
+                            const formatted = jsonWorks.data.map(item => {
                         const attrs = item.attributes || item;
+                        // В Strapi 5 image может быть объектом напрямую
                         const imageData = attrs.image?.data?.attributes || attrs.image;
+                        
+                        let imageUrl = '';
+                        if (imageData?.url) {
+                            imageUrl = imageData.url.startsWith('http') 
+                                ? imageData.url 
+                                : `${baseUrl}${imageData.url}`;
+                        } else {
+                            imageUrl = getAsset('image/block6/foto4.jpg');
+                        }
                         
                         return {
                             title: attrs.title,
-                            image: imageData?.url ? `${baseUrl}${imageData.url}` : getAsset('image/block6/foto4.jpg')
+                            image: imageUrl
                         };
                     });
                     setWorks(formatted);
@@ -204,9 +213,18 @@ const App = () => {
                         const attrs = item.attributes || item;
                         const imageData = attrs.image?.data?.attributes || attrs.image;
                         
+                        let imageUrl = '';
+                        if (imageData?.url) {
+                            imageUrl = imageData.url.startsWith('http') 
+                                ? imageData.url 
+                                : `${baseUrl}${imageData.url}`;
+                        } else {
+                            imageUrl = getAsset('image/block3/foto1.jpg');
+                        }
+                        
                         return {
                             title: attrs.title,
-                            image: imageData?.url ? `${baseUrl}${imageData.url}` : getAsset('image/block3/foto1.jpg'),
+                            image: imageUrl,
                             items: Array.isArray(attrs.items) ? attrs.items : []
                         };
                     });
