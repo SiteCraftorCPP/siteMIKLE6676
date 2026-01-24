@@ -55,6 +55,24 @@ const App = () => {
         'Контакты': 'contacts'
     };
 
+    const scrollToSection = (e, id) => {
+        e.preventDefault();
+        const element = document.getElementById(id);
+        if (element) {
+            const offset = 100; // Отступ сверху, чтобы шапка не перекрывала заголовок
+            const bodyRect = document.body.getBoundingClientRect().top;
+            const elementRect = element.getBoundingClientRect().top;
+            const elementPosition = elementRect - bodyRect;
+            const offsetPosition = elementPosition - offset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+        setIsMobileMenuOpen(false);
+    };
+
     // getAsset moved outside component
 
     const [services, setServices] = useState([
@@ -270,7 +288,7 @@ const App = () => {
                 )}
 
                 {/* Header Content */}
-                <div className="w-full h-full flex items-center relative z-10 px-0 md:px-4">
+                <div className="w-full h-full flex items-center relative z-20 px-0 md:px-4">
                     {/* Mobile Header (visible below 1024px) */}
                     <div className="flex lg:hidden items-center justify-start w-full transition-all duration-300 py-2 px-0">
                         <div className="flex items-center gap-0 transform translate-y-1">
@@ -350,7 +368,7 @@ const App = () => {
                                     className="h-full w-auto absolute left-0 top-0 object-contain pointer-events-none"
                                 />
                             </div>
-                            <div className={`flex flex-col justify-center items-stretch w-fit transition-all duration-300 ${isScrolled
+                            <div className={`flex flex-col justify-center items-stretch w-fit transition-all duration-300 relative z-30 ${isScrolled
                                 ? 'transform translate-y-0.5 ml-3 md:ml-4 lg:ml-8'
                                 : 'transform translate-y-[22px] ml-1.5 md:ml-0 lg:ml-4'
                                 } ${isScrolled ? 'text-[#21243F]' : 'text-white'}`}>
@@ -367,13 +385,14 @@ const App = () => {
                             </div>
                         </div>
 
-                        <nav className={`flex items-center justify-center flex-grow gap-6 2xl:gap-10 transition-all duration-300 pointer-events-none ${isScrolled ? 'transform translate-y-0' : 'transform translate-y-[18px]'}`}>
+                        <nav className={`flex items-center justify-center flex-grow gap-6 2xl:gap-10 transition-all duration-300 relative z-30 ${isScrolled ? 'transform translate-y-0' : 'transform translate-y-[18px]'}`}>
                             {menuItems.map((item, index) => (
                                 index < visibleItems.length && (
                                     <a
                                         key={item}
                                         href={`#${sectionIds[item]}`}
-                                        className={`pointer-events-auto flex-shrink-0 font-[800] text-[20px] 2xl:text-[26px] transition-colors hover:text-[#F25A18] whitespace-nowrap ${isScrolled ? 'text-[#21243F]' : 'text-white'}`}
+                                        onClick={(e) => scrollToSection(e, sectionIds[item])}
+                                        className={`flex-shrink-0 font-[800] text-[20px] 2xl:text-[26px] transition-colors hover:text-[#F25A18] whitespace-nowrap ${isScrolled ? 'text-[#21243F]' : 'text-white'}`}
                                     >
                                         {item}
                                     </a>
@@ -455,7 +474,7 @@ const App = () => {
                                                 key={item}
                                                 href={`#${sectionIds[item]}`}
                                                 className="font-[800] text-[18px] sm:text-[22px] md:text-[26px] text-[#21243F] hover:text-[#F25A18] transition-colors border-b border-gray-100 pb-2"
-                                                onClick={() => setIsMobileMenuOpen(false)}
+                                                onClick={(e) => scrollToSection(e, sectionIds[item])}
                                             >
                                                 {item}
                                             </a>
