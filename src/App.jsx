@@ -501,7 +501,7 @@ const App = () => {
                 </motion.div>
 
                 {/* Hero Content */}
-                <div className="relative z-20 w-full px-4 sm:px-8 lg:px-20 pt-[160px] sm:pt-[210px] md:pt-[340px] lg:translate-x-[35px]">
+                <div className="relative z-20 w-full px-4 sm:px-8 lg:px-20 pt-[120px] sm:pt-[160px] md:pt-[240px] lg:translate-x-[35px]">
                     <motion.div
                         initial="hidden"
                         animate="visible"
