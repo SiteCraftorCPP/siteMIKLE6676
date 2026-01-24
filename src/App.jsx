@@ -161,23 +161,21 @@ const App = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            // Пытаемся определить URL API автоматически
-            let baseUrl = import.meta.env.VITE_API_URL;
+            // Если мы на локалке - идем на сервер напрямую.
+            // Если на домене - используем относительные пути для Nginx прокси.
+            let baseUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+                ? 'http://85.239.35.34:1337'
+                : '';
             
-            if (!baseUrl) {
-                // Если мы на реальном домене (не localhost), используем относительные пути.
-                // Это позволит Nginx проксировать запросы и избежать Mixed Content (HTTPS -> HTTP).
-                if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-                    baseUrl = ''; 
-                } else {
-                    baseUrl = 'http://localhost:1337';
-                }
-            }
+            console.log('API Mode:', baseUrl === '' ? 'Production (Nginx)' : 'Local Dev (Remote API)');
             
             console.log('API URL Mode:', baseUrl === '' ? 'Relative (Nginx Proxy)' : baseUrl);
             try {
+                console.log('Fetching Rabotas from:', `${baseUrl}/api/rabotas?populate=*`);
                 const resWorks = await fetch(`${baseUrl}/api/rabotas?populate=*`);
+                if (!resWorks.ok) throw new Error(`HTTP error! status: ${resWorks.status}`);
                 const jsonWorks = await resWorks.json();
+                console.log('Rabotas received:', jsonWorks);
                 
                 if (jsonWorks.data && jsonWorks.data.length > 0) {
                             const formatted = jsonWorks.data.map(item => {
@@ -201,12 +199,17 @@ const App = () => {
                     });
                     setWorks(formatted);
                 }
-            } catch (e) { console.log('Rabota API error', e); }
+            } catch (e) { 
+                console.error('CRITICAL: Rabota API error', e); 
+            }
 
             // Загрузка услуг
             try {
+                console.log('Fetching Uslugas from:', `${baseUrl}/api/uslugas?populate=*`);
                 const resServices = await fetch(`${baseUrl}/api/uslugas?populate=*`);
+                if (!resServices.ok) throw new Error(`HTTP error! status: ${resServices.status}`);
                 const jsonServices = await resServices.json();
+                console.log('Uslugas received:', jsonServices);
                 
                 if (jsonServices.data && jsonServices.data.length > 0) {
                     const formatted = jsonServices.data.map(item => {
