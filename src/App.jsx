@@ -519,7 +519,7 @@ const App = () => {
                             className="text-[32px] sm:text-[48px] md:text-[90px] lg:text-[100px] font-[800] text-white leading-[1.1] md:leading-[0.95] mb-6 sm:mb-10 md:mb-14 uppercase tracking-tighter"
                         >
                             Профессиональный ремонт, монтаж и<br />
-                            обслуживание отопления и водоснабжения.<br />
+                            обслуживание систем отопления и водоснабжения.<br />
                             <span className="text-[#F26E35] inline-block mt-2 md:mt-4">В ИСТРИНСКОМ РАЙОНЕ</span>
                         </motion.h1>
 
