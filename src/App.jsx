@@ -1113,9 +1113,10 @@ const App = () => {
                     {/* PC VERSION: LOGO (LEFT) */}
                     <div className="hidden lg:flex flex-col items-start transition-transform duration-300">
                                 <img
-                                    src={getAsset("image/block9/logo_invert.png")}
+                                    src="/image/block9/footer-logo.png?v=1"
                                     alt="AT SERVICE"
                                     className="h-[200px] xl:h-[260px] w-auto mb-2"
+                                    onError={(e) => console.error('Logo Load Error:', e.target.src)}
                                 />
                         <div className="text-white font-manrope font-[800] flex flex-col items-start w-fit lg:ml-4">
                             <h3 className="text-[14px] xl:text-[16px] leading-tight uppercase tracking-[0.04em] whitespace-nowrap">Сервисная служба Истра</h3>
@@ -1138,9 +1139,10 @@ const App = () => {
                     {/* MOBILE VERSION */}
                     <div className="flex lg:hidden flex-col items-center text-center w-full">
                         <img
-                            src={getAsset("image/block9/logo_invert.png")}
+                            src="/image/block9/footer-logo.png?v=1"
                             alt="AT SERVICE"
                             className="w-[240px] h-auto mb-4"
+                            onError={(e) => console.error('Logo Mobile Load Error:', e.target.src)}
                         />
                         <div className="text-white font-manrope font-[800] flex flex-col items-center">
                             <h3 className="text-[20px] leading-tight uppercase tracking-[0.04em] whitespace-nowrap">Сервисная служба Истра</h3>
