@@ -9,7 +9,8 @@ const getAsset = (path) => {
     if (!path) return '';
     if (path.startsWith('http') || path.startsWith('data:')) return path;
     
-    // Чистый путь от корня домена
+    // Для локальной разработки (Vite) пути должны быть относительными от корня проекта
+    // В продакшене (на сервере) Nginx отдаст их по абсолютному пути
     const cleanPath = path.startsWith('/') ? path : `/${path}`;
     return cleanPath;
 };
@@ -383,19 +384,21 @@ const App = () => {
 
                     {/* Right Button Section - Fixed position relative to the right edge to stay inside the SVG block */}
                     <div className="hidden lg:flex items-center absolute right-0 top-0 h-full w-[250px] md:w-[350px] lg:w-[400px] xl:w-[450px] justify-center z-20 pointer-events-none pr-4 md:pr-8 xl:pr-0">
-                        <motion.a
-                            href="#contacts"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            style={{
-                                y: isScrolled ? 0 : -28,
-                                x: isScrolled ? 0 : 55
-                            }}
-                            className={`pointer-events-auto bg-[#F25A18] text-white font-[800] text-[14px] md:text-[16px] xl:text-[19px] px-4 md:px-6 xl:px-8 py-2 md:py-3 xl:py-3.5 rounded-[10px] xl:rounded-[12px] flex items-center gap-2 xl:gap-3 whitespace-nowrap shadow-xl transform transition-all duration-300`}
-                        >
-                            СВЯЗАТЬСЯ С НАМИ
-                            <ChevronRight size={windowWidth < 1280 ? 18 : 22} strokeWidth={3} />
-                        </motion.a>
+                            <motion.a
+                                href="https://vk.me/atservice_official"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                style={{
+                                    y: isScrolled ? 0 : -28,
+                                    x: isScrolled ? 0 : 55
+                                }}
+                                className={`pointer-events-auto bg-[#F25A18] text-white font-[800] text-[14px] md:text-[16px] xl:text-[19px] px-4 md:px-6 xl:px-8 py-2 md:py-3 xl:py-3.5 rounded-[10px] xl:rounded-[12px] flex items-center gap-2 xl:gap-3 whitespace-nowrap shadow-xl transform transition-all duration-300`}
+                            >
+                                СВЯЗАТЬСЯ С НАМИ
+                                <ChevronRight size={windowWidth < 1280 ? 18 : 22} strokeWidth={3} />
+                            </motion.a>
                     </div>
 
                     {/* Mobile Menu Toggle */}
@@ -460,7 +463,7 @@ const App = () => {
                                     </nav>
 
                                     <div className="mt-auto pt-10 flex flex-col gap-6">
-                                        <a href="#contacts" onClick={() => setIsMobileMenuOpen(false)} className="w-full bg-[#F25A18] text-white font-[800] text-[18px] py-4 rounded-[12px] shadow-lg active:scale-95 transition-transform text-center">
+                                    <a href="https://vk.me/atservice_official" target="_blank" rel="noopener noreferrer" onClick={() => setIsMobileMenuOpen(false)} className="w-full bg-[#F25A18] text-white font-[800] text-[18px] py-4 rounded-[12px] shadow-lg active:scale-95 transition-transform text-center">
                                             СВЯЗАТЬСЯ С НАМИ
                                         </a>
                                         <div className="text-center">
@@ -539,7 +542,9 @@ const App = () => {
                             transition={{ duration: 0.8 }}
                         >
                             <motion.a
-                                href="#contacts"
+                                href="https://vk.me/atservice_official"
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 className="group relative bg-[#F25A18] text-white font-[800] text-[18px] sm:text-[24px] md:text-[40px] lg:text-[50px] px-8 sm:px-12 md:px-24 py-5 sm:py-7 md:py-12 rounded-[10px] md:rounded-[15px] flex items-center gap-4 md:gap-10 shadow-2xl w-fit"
@@ -649,7 +654,9 @@ const App = () => {
                                     </div>
                                 </div>
                                 <motion.a
-                                    href="#contacts"
+                                    href="https://vk.me/atservice_official"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     className="w-full bg-[#F25A18] text-white font-[800] text-[18px] sm:text-[20px] md:text-[28px] py-4 sm:py-6 rounded-[12px] md:rounded-[15px] flex items-center justify-center gap-3 sm:gap-4 shadow-xl uppercase font-manrope transition-shadow hover:shadow-orange-500/20"
@@ -710,7 +717,9 @@ const App = () => {
                     </div>
 
                     <motion.a
-                        href="#contacts"
+                        href="https://vk.me/atservice_official"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
@@ -791,7 +800,9 @@ const App = () => {
                             </p>
                             <div className="flex-shrink-0 flex justify-center sm:justify-end w-full sm:w-auto">
                                 <motion.a
-                                    href="#contacts"
+                                    href="https://vk.me/atservice_official"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     className="relative bg-[#F25A18] text-white font-[800] text-[16px] md:text-[28px] lg:text-[32px] xl:text-[36px] px-6 md:px-14 xl:px-20 py-3 md:py-6 xl:py-7 rounded-[10px] md:rounded-[15px] shadow-2xl uppercase font-manrope overflow-hidden group flex items-center gap-3 md:gap-5 shrink-0 whitespace-nowrap"
@@ -961,6 +972,7 @@ const App = () => {
                             transition={{ duration: 0.6 }}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
+                            onClick={() => window.open('https://www.avito.ru/brands/i520444?src=sharing', '_blank')}
                             className="group bg-white rounded-[15px] px-6 sm:px-10 py-4 sm:py-5 shadow-[0_4px_25px_rgba(33,36,63,0.3)] flex items-center gap-4 sm:gap-6 transition-all border border-gray-100"
                         >
                             <div className="flex items-center gap-3 sm:gap-5">
@@ -1042,7 +1054,9 @@ const App = () => {
                     </div>
 
                     <motion.a
-                        href="#contacts"
+                        href="https://vk.me/atservice_official"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         style={{ translateY: windowWidth < 768 ? "5px" : "-10px" }}
@@ -1059,7 +1073,7 @@ const App = () => {
                     {/* PC VERSION: LOGO (LEFT) */}
                     <div className="hidden lg:flex flex-col items-start transition-transform duration-300">
                                 <img
-                                    src={getAsset("image/block9/logo_invert.png")}
+                                    src={getAsset("image/block9/logo invert.png")}
                                     alt="AT SERVICE"
                                     className="h-[200px] xl:h-[260px] w-auto mb-2"
                                 />
@@ -1074,16 +1088,9 @@ const App = () => {
                         <div className="flex flex-col gap-6 text-[#515678] text-[13px] xl:text-[14px] font-semibold font-inter border-x border-white/5 px-10 xl:px-14 py-4">
                             <div className="flex flex-col gap-0.5">
                                 <p className="text-white/30 uppercase text-[10px] xl:text-[11px] tracking-widest mb-1">Реквизиты:</p>
-                                <p>ИП Бойкова Эльмира Викторовна</p>
                                 <p>ИНН: 500406181094</p>
                                 <p>ОГРНИП: 323774600215139</p>
                                 <p>ОКПО: 2021605256</p>
-                            </div>
-                            <div className="flex flex-col gap-0.5">
-                                <p className="text-white/30 uppercase text-[10px] xl:text-[11px] tracking-widest mb-1">Банк:</p>
-                                <p>БАНК ВТБ (ПАО) / БИК: 44525411</p>
-                                <p className="break-all">Р/С: 40802810223710000000</p>
-                                <p className="break-all">К/С: 30101810145250000000</p>
                             </div>
                         </div>
                     </div>
@@ -1091,7 +1098,7 @@ const App = () => {
                     {/* MOBILE VERSION */}
                     <div className="flex lg:hidden flex-col items-center text-center w-full">
                         <img
-                            src={getAsset("image/block9/logo_invert.png")}
+                            src={getAsset("image/block9/logo invert.png")}
                             alt="AT SERVICE"
                             className="w-[240px] h-auto mb-4"
                         />
@@ -1131,17 +1138,9 @@ const App = () => {
                     <div className="lg:hidden grid grid-cols-1 md:grid-cols-2 gap-6 text-[#515678] text-[14px] md:text-[16px] font-semibold font-inter mb-10">
                         <div className="flex flex-col gap-1">
                             <p className="text-white/80 uppercase text-[12px] tracking-wider mb-1">Реквизиты:</p>
-                            <p>ИП Бойкова Эльмира Викторовна</p>
                             <p>ИНН: 500406181094</p>
                             <p>ОГРНИП: 323774600215139</p>
                             <p>ОКПО: 2021605256</p>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                            <p className="text-white/80 uppercase text-[12px] tracking-wider mb-1">Банковские данные:</p>
-                            <p>Банк: БАНК ВТБ (ПАО)</p>
-                            <p>БИК: 44525411</p>
-                            <p>Корр. счет: 30101810145250000000</p>
-                            <p>Расчетный счет: 40802810223710000000</p>
                         </div>
                     </div>
                     
