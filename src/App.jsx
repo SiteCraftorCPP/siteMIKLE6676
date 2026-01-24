@@ -1113,7 +1113,7 @@ const App = () => {
                     {/* PC VERSION: LOGO (LEFT) */}
                     <div className="hidden lg:flex flex-col items-start transition-transform duration-300">
                                 <img
-                                    src={getAsset("image/block9/logo invert.png")}
+                                    src={getAsset("image/block9/logo_invert.png")}
                                     alt="AT SERVICE"
                                     className="h-[200px] xl:h-[260px] w-auto mb-2"
                                 />
@@ -1138,7 +1138,7 @@ const App = () => {
                     {/* MOBILE VERSION */}
                     <div className="flex lg:hidden flex-col items-center text-center w-full">
                         <img
-                            src={getAsset("image/block9/logo invert.png")}
+                            src={getAsset("image/block9/logo_invert.png")}
                             alt="AT SERVICE"
                             className="w-[240px] h-auto mb-4"
                         />
